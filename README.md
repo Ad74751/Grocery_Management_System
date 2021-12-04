@@ -3,7 +3,7 @@ A Simple Grocery Management System Made In Python Flask
 
 1. Navigate in the main directory.
 2. Create an virtual enviornment by running:\
-   **virtualenv <Your Enviornment Name>**
+   *`virtualenv <Your Enviornment Name>`*
 3. Activate the virtual enviornment:\
    *`source <Your Enviornment Name>/bin/activate`* (Mac/Linux)\
    *`powershell ./<Your Enviornment Name>/bin/activate.ps1`* (Windows)\

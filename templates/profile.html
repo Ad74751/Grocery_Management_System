@@ -1,0 +1,83 @@
+{% extends 'base_auth.html' %}
+{% block content %}
+<div class="container">
+    <div class="main-body">
+          <div class="row gutters-sm">
+            <div class="col-md-4 mb-3">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex flex-column align-items-center text-center">
+                    <img src="https://avatars.githubusercontent.com/u/7940844?s=88&v=4" alt="Admin" class="rounded-circle" width="150">
+                    <div class="mt-3">
+                      <h4>{{user.name}}</h4>
+                      <p class="text-secondary mb-1">{{user.uid}}</p>
+                      <button class="btn btn-danger w-100" onclick="askConfirm()">Delete Account</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <script>
+              function askConfirm(){
+                var r = confirm("You are about to delete your account."+'\n'+"This account cannot be recovered after deletion"+"\n"+"Are you sure to delete this account ?");
+                if (r == true) {
+                  window.location.replace('/delete-account/{{user.uid}}')
+                }
+              }
+            </script>
+            <div class="col-md-8">
+              <div class="card mb-3">
+                <form action="/edit-profile" method="post" class="card-body">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Full Name</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                        <input name="name" type="text" value="{{user.name}}" class="form-control" required>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Email</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                        <input name="email" type="text" value="{{user.email}}" class="form-control" required>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Phone</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                        <input name="phone" type="text" value="{{user.phone}}" class="form-control" required>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Address</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                        <input name="address" type="text" value="{{user.address}}" class="form-control" required>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-9 text-secondary">
+                        <input name="uid" type="text" value="{{user.uid}}" class="form-control" hidden>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <button type="submit" class="btn btn-info">Edit</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -30,7 +30,10 @@
     <!-- Tweaks for older IEs--><!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+   
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
   </head>
   <body>
     <div class="page-holder">
@@ -59,6 +62,17 @@
                {% if user %}
                <li class="nav-item"><a class="nav-link" href="/logout"> <i class="fas fa-sign-out  mr-1 text-gray"></i>Logout</a></li>
                <li class="nav-item"><a class="nav-link" href="/profile/{{user}}"> <i class="fas fa-sign-out  mr-1 text-gray"></i>Profile</a></li>
+               <li class="nav-item">
+                <div class="dropdown">
+                <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                  🛒
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="cart-dd">
+                  
+                </ul>
+                <li class="nav-item"><a class="nav-link" href="/checkout/{{user}}"> <i class="fas fa-sign-out  mr-1 text-gray"></i>Checkout</a></li>
+                
+              </div></li>
                {% else %}
                <li class="nav-item"><a class="nav-link" href="/login"> <i class="fas fa-user-alt mr-1 text-gray"></i>Login</a></li>
                {% endif %}
@@ -190,6 +204,88 @@
 <script src="/static/vendor/owl.carousel2/owl.carousel.min.js"></script>
 <script src="/static/vendor/owl.carousel2.thumbs/owl.carousel2.thumbs.min.js"></script>
 <script src="/static/js/front.js"></script>
+<script>
+   var cart = [];
+   var products_ = [];
+   var key = "12312343";
+   window.key = key;
+   fetch("/products/all")
+      .then((resp) => resp.json())
+      .then((products) => {
+        if (products) {
+          products.map((prod) => {
+            prod['qty'] = 1;
+            products_.push(prod);
+          });
+        }
+    });
+    if(localStorage.getItem(key)){
+      JSON.parse(localStorage.getItem(key)).map(ele=>{
+        cart.push(ele);
+      });
+    }
+    updateUI();
+   function itemExists(id){
+    let item = cart.map((item)=>{
+      if(item.uid === id){
+        return true
+      }
+      else{
+        return false
+      }
+    });
+   }
+   function getItem(id){
+      const item = products_.find(element=>{
+        return element.uid === id;
+      });  
+      return item;  
+   }
+   function getIndex(id){
+      const idx = cart.findIndex(element=>{
+        return element.uid === id;
+      });  
+      return idx;
+   }
+   function addToCart(id){
+      var item = getItem(id);
+      if(getIndex(id) > -1){
+        cart[getIndex(id)].qty += 1
+      }
+      else{
+        cart.push(item);
+      }
+      updateUI();
+      saveToLS();   
+   }
+   function removeProduct(id){
+     if(getIndex(id) > -1){
+      if(cart[getIndex(id)].qty > 1){
+        cart[getIndex(id)].qty -= 1;
+      }
+      else{
+        cart.splice(getIndex(id),1);
+      }
+     }
+     updateUI();
+     saveToLS();
+   }
+   async function saveToLS(){
+    console.log(JSON.stringify(cart))
+    await localStorage.setItem(key,JSON.stringify(cart))
+   }
+   function updateUI(){
+    $("#cart-dd").html("");
+    if(cart.length > 0){
+      cart.forEach(ele=>{
+        $("#cart-dd").append(`<li style="display:flex;"><img width="50px" height="50px" src="${ele['img'].substring(1)}" alt="logo"/><a class="dropdown-item text-align:center;justify-content:center;align-items:center" href="#">${ele['name']} (${ele['qty']})</a><button class="btn btn-danger" onclick="removeProduct('${ele['uid']}');">Remove</button></li>`);
+      });
+    }
+    else{
+      $("#cart-dd").append(`<li>No items in cart.</li>`);
+    }
+   }
+</script>
 <script>
   // ------------------------------------------------------- //
   //   Inject SVG Sprite - 

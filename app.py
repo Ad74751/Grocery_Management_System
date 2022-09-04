@@ -1,5 +1,5 @@
 import os
-from flask import Flask, json, render_template, request, make_response, jsonify
+from flask import Flask,  render_template, request, make_response, jsonify
 from werkzeug.utils import redirect, secure_filename
 from database import DB
 import uuid
@@ -141,6 +141,17 @@ def index():
         return render_template("index.html", user=getUserID(request.cookies.get('ssid')))
     else:
         return render_template("index.html", user=None)
+
+@app.route('/checkout/<uid>')
+def buy(uid):
+    if isAuthenticated(request.cookies.get('ssid')) and getUserID(request.cookies.get('ssid')) == uid:
+        user = User.query.filter(User.uid == uid).first()
+        if user:
+            return render_template("buy.html", user=user)
+        else:
+            return redirect('/login')
+    else:
+        return redirect('/login')
 
 
 @app.route('/shop')
